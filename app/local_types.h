@@ -2,6 +2,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QLayoutItem>
+#include <QVariant>
+#include <QSettings>
 #include <utility>  // for std::pair, can be turned off in some compilers
 #include <cstdint>  // for uint8_t, can be turned off in some compilers
 import bitremedy;
@@ -24,7 +26,6 @@ namespace mmd
 
     enum setnum : uint8_t 
     {
-        user_name_e,
         opp_name_e,
         time_setup_e,
         match_side_e,
@@ -37,7 +38,6 @@ namespace mmd
         pic_w_e,
         pic_h_e,
         def_pic_e,
-        user_pic_e,
         opp_pic_e,
         pic_mask_e,
         user_pass_e
@@ -176,15 +176,22 @@ namespace mmd
     extern const std::map<promnum, char> char_by_promo;
 
     extern std::map<setnum, QVariant> settings;
+    extern const QString friend_offline;  // constants for game_regime setting
+    extern const QString friend_online;
+    extern const QString training;
+    extern const QString historical;
 
-    extern QString friend_offline;
-    extern QString friend_online;
-    extern QString training;
-    extern QString historical;
+    extern QSettings user_settings;
+    extern const QString username_setting;
+    extern const QString userpic_setting;
 
     void setPic(setnum par, const QPixmap& pic);
 
+    void setPic(QString par, const QPixmap& pic);
+
     QPixmap getPic(setnum par);
+
+    QPixmap getPic(QString par);
 
     void setBMap(setnum par, const QBitmap& bmap);
 

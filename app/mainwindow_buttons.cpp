@@ -47,11 +47,12 @@ namespace mmd
             QString("Choose a photo for avatar. Avatar picture will be scaled to " + w + "x" + h + " pixel image."),
             tr("Images (*.png *.jpg *.jpeg *.pgm)"));
         if (!avatar_address.isEmpty()) {
-            QPixmap user_pic = QPixmap(avatar_address).scaled(width, height);
-            setPic(user_pic_e, user_pic);
-            ui->profile_avatar->setPixmap(user_pic);
+            QPixmap user_pixmap = QPixmap(avatar_address).scaled(width, height);
+            setPic(userpic_setting, user_pixmap); // changes the setting
+            ui->profile_avatar->setPixmap(user_pixmap);
             if (game_active)
-                ui->user_avatar->setPixmap(user_pic);
+                ui->user_avatar->setPixmap(user_pixmap);
+            showBox("Success", "Picture is saved.");
         }
     }
 
@@ -91,6 +92,10 @@ namespace mmd
     void MainWindow::on_actionWith_friend_triggered()
     {
         QString game_regime = settings[game_regime_e].toString();
+        if (game_active && game_regime == friend_online){
+            openStopGameBox();
+            return;
+        }
         openTab(ui->friend_connect_tab);
     }
 
@@ -162,7 +167,7 @@ namespace mmd
     {
         int chosen_time = settings[time_setup_e].toInt();
         QString opp_name = ui->friend_name_edit->text();
-        QString user_name = settings[user_name_e].toString();
+        QString user_name = user_settings.value(username_setting).toString();
         if (!chosen_time) {
             showBox("Set up match timer",
                 "You need to choose initial time for chess clock.",
@@ -189,7 +194,7 @@ namespace mmd
     void MainWindow::editReturnSlot()
     {
         QString message_text = ui->message_edit->toPlainText();
-        chat->printMessage(settings[user_name_e].toString(), true, message_text);
+        chat->printMessage(user_settings.value(username_setting).toString(), true, message_text);
         ui->message_edit->clear();
         if (settings[game_regime_e].toString() == friend_online)
             net->sendToServer(chat_message, false, message_text);
@@ -262,7 +267,7 @@ namespace mmd
             net->connectNewHost();
         }
         else {
-            showBox("Success", "New adress saved locally. 'net' variable not initialized.");
+            showBox("Saved locally", "New adress saved locally. 'net' variable not initialized.");
         }
     }
 

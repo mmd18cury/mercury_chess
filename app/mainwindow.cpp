@@ -114,32 +114,36 @@ namespace mmd
         QBitmap pic_mask = pix.createMaskFromColor(Qt::transparent);
 
         // settings init
-    //settings = QSettings("settings_" + curTime() + ".ini", QSettings::IniFormat);
         settings[user_pass_e] = {};
-        settings[user_name_e].setValue("Lazy"_qs +
-            QString::number(rand() % int(1e8)));
         settings[opp_name_e].setValue("Friend"_qs);
         settings[time_setup_e].setValue(0);
         settings[match_side_e].setValue(true);
-        settings[game_regime_e].setValue(QString(friend_offline));
+        settings[game_regime_e].setValue(friend_offline);
         settings[def_port_e].setValue(49001);
         settings[port_address_e].setValue(49001);
         settings[def_address_e].setValue("45.76.82.147"_qs);
-        settings[ip_address_e].setValue(/*"127.0.0.1"_qs*/"45.76.82.147"_qs);
+        settings[ip_address_e].setValue(/*"127.0.0.1"_qs*/ "45.76.82.147"_qs);
         settings[max_nick_e].setValue(12);
         settings[pic_w_e].setValue(100);
         settings[pic_h_e].setValue(100);
         setPic(def_pic_e, QPixmap(":images/profile"));
-        setPic(user_pic_e, QPixmap(":images/profile"));
         setPic(opp_pic_e, QPixmap(":images/profile"));
         setBMap(pic_mask_e, pic_mask);
+
+        if (!user_settings.contains(username_setting)){
+            user_settings.setValue(username_setting, "Lazy" +
+                QString::number(rand() % int(1e8)));
+        }
+        if(!user_settings.contains(userpic_setting)){
+            setPic(userpic_setting, QPixmap(":images/profile"));
+        }
 
         // user and opponent avatars in game and settings
         ui->user_avatar->setMask(getBMap(pic_mask_e));
         ui->opponent_avatar->setMask(getBMap(pic_mask_e));
         ui->profile_avatar->setMask(getBMap(pic_mask_e)); // picture in the settings
-        ui->profile_name->setText(settings[user_name_e].toString());
-        ui->profile_avatar->setPixmap(QPixmap(":images/profile"));
+        ui->profile_name->setText(user_settings.value(username_setting).toString());
+        ui->profile_avatar->setPixmap(getPic(userpic_setting));
 
         // time limit buttons from friend_connect_tab 
         auto layout = ui->time_limits_layout;
@@ -232,7 +236,7 @@ namespace mmd
             return 2;
         }
         else {
-            settings[user_name_e].setValue(name);
+            user_settings.setValue(username_setting, name);
             ui->user_name->setText(name);
             ui->profile_name->setText(name);
         }
@@ -267,6 +271,7 @@ namespace mmd
         else if (game_regime == friend_offline || game_regime == training) {
             if (game_regime == training) {
                 settings[opp_name_e].setValue("DarkSide"_qs);
+                setPic(opp_pic_e, getPic(def_pic_e));
             }
             settings[match_side_e].setValue(true);
             ui->message_edit->setPlainText("Chat is off. But you can chat with yourself if you are a hikikomori.");
@@ -293,8 +298,8 @@ namespace mmd
         }
         openTab(ui->game_tab);
         activateWindow();
-        ui->user_avatar->setPixmap(getPic(user_pic_e));
-        ui->user_name->setText(settings[user_name_e].toString());
+        ui->user_avatar->setPixmap(getPic(userpic_setting));
+        ui->user_name->setText(user_settings.value(username_setting).toString());
         ui->opponent_avatar->setPixmap(getPic(opp_pic_e));
         ui->opponent_name->setText(settings[opp_name_e].toString());
         chat->clearMessages();
@@ -408,7 +413,7 @@ namespace mmd
             break;
         case endnum::opponent_disconnected_end:
             icon_type = QMessageBox::Critical;
-            info_message = opp_name + " disconnected. Maybe he doesn't like to play with you?";
+            info_message = opp_name + " disconnected. Maybe the player doesn't like to play with you?";
             break;
         case endnum::server_disconnected:
             info_message = "-1";

@@ -50,7 +50,7 @@ namespace mmd
                     QMessageBox::Warning);
             }
             else if (socket->state() != QAbstractSocket::ConnectedState) {
-                qWarning() << "Error occured while trying to connect to server:";
+                qWarning() << "Error occured while trying to connect to the server:";
                 qWarning() << socketError;
                 showBox("No connection",
                     "An error occured. Contact me by mmd18cury@yandex.com.",
@@ -134,9 +134,19 @@ namespace mmd
 
     void WebClient::connectNewHost()
     {
+        // TODO: move lambdas from initSocket into functions, and disconnect socket's diconnected signal from a critical messagebox
         if (!socket) {
             initSocket();
         }
+        else{  // first - disconnect, then connect, otherwise qt will think we've connected successfully even with invalid IP-address or port, because previous connection is OK
+            socket->disconnectFromHost();
+            if (socket->state() != QAbstractSocket::UnconnectedState && !socket->waitForDisconnected(3000)){
+                qWarning() << "Couldn't disconnect from host";  // if could then lambda slot of socket::disconnected will be called and message box will be shown
+                showBox("Disconnection error", "Couldn't disconnect from the previous host.", QMessageBox::Warning);
+                return;
+            }
+        }
+
         if (connectToServer()) {
             showBox("Success", "New connection established. Now log in.");
         }
@@ -194,18 +204,18 @@ namespace mmd
             connectToServer();
         }
         if (!checkConnection(type)) {
-            qCritical() << "Couldn't send data to server. Data type is " << int(type);
+            qCritical() << "Couldn't send data to server: checkConnection(type) failed. packnum index is " << int(type);
             return;
         }
         switch (type) {
         case packnum::registration:
             writePack(packnum::registration);
-            writePack(settings[user_name_e].toString());
+            writePack(user_settings.value(username_setting).toString());
             writePack(settings[user_pass_e].toByteArray());
             break;
         case packnum::login:
             writePack(packnum::login);
-            writePack(settings[user_name_e].toString());
+            writePack(user_settings.value(username_setting).toString());
             writePack(settings[user_pass_e].toByteArray());
             break;
         case packnum::new_name:
@@ -215,16 +225,16 @@ namespace mmd
         case packnum::invite:
             writePack(packnum::invite);
             writePack(settings[opp_name_e].toString());
-            writePack(settings[user_name_e].toString());
+            writePack(user_settings.value(username_setting).toString());
             writePack((quint8)(settings[time_setup_e].toInt()));
             writePack(!settings[match_side_e].toBool());
-            writePack(getPic(user_pic_e));
+            writePack(getPic(userpic_setting));  // TODO: should we add pictures to invites?
             break;
         case packnum::invite_respond:
             writePack(packnum::invite_respond);
             writePack(respond);
             if (respond)
-                writePack(getPic(user_pic_e));
+                writePack(getPic(userpic_setting));
             break;
         case packnum::move_pack:
             writePack(packnum::move_pack);
@@ -455,6 +465,7 @@ namespace mmd
             }
 
             mainwindow->ui->login_password->clear();
+            settings[user_pass_e] = {};
             break;
         }
         case packnum::wrong_password:

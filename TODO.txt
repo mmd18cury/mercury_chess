@@ -2,3 +2,12 @@
 - Consider appropriate situations to use qFatal() instead of qWarning() and qCritical() to avoid memory leaks or something
 - Divide WebClient and MainWindow, leave an opportunity to turn off signals from server, otherwise they can interfere in games etc.
 - Test 50 rules counter better, seems like somewhere a bug in it
+- Think about a way to save QSettings file for every user. It probably will need to create a class User, with bool member called isGuest
+- Move lambdas from initSocket into functions, and disconnect socket's diconnected signal from a critical messagebox
+- Use QTimerEvent to avoid GUI thread blocking while waiting for connection: https://stackoverflow.com/questions/53006554/qtcpsocket-reconnect-to-server-without-blocking-gui
+- Make message headers bold in chat. Probably will require using exra QLabels for those headers.
+- Fulfill mmd18 data format, at least a short version for .pgn. Extended version also should be done sooner or later.
+- Make a better time synchronization for bullet plays.
+- Find a way to make button borders while selected rounded and beautiful.
+- Consider changing props in QLineEdits to another style.
+- Consider sending signal of rejecting invite to an inviter.

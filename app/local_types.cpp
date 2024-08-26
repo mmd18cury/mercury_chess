@@ -89,18 +89,35 @@ namespace mmd
         msg_box.exec();
     }
 
-    void setPic(setnum par, const QPixmap& pic, QVariant& setting)
+    void setPic(setnum par, const QPixmap& pic)
     {
         QByteArray arr;
         QBuffer buffer(&arr);
         buffer.open(QIODevice::WriteOnly);
         pic.save(&buffer, "PNG");
-        setting.setValue(arr);
+        settings[par].setValue(arr);
     }
 
-    QPixmap getPic(setnum par, QVariant& setting)
+    void setPic(QString par, const QPixmap& pic)
     {
-        QByteArray arr = setting.toByteArray();
+        QByteArray arr;
+        QBuffer buffer(&arr);
+        buffer.open(QIODevice::WriteOnly);
+        pic.save(&buffer, "PNG");
+        user_settings.setValue(par, arr);
+    }
+
+    QPixmap getPic(setnum par)
+    {
+        QByteArray arr = settings[par].toByteArray();
+        QPixmap pic;
+        pic.loadFromData(arr, "PNG");
+        return pic;
+    }
+
+    QPixmap getPic(QString par)
+    {
+        QByteArray arr = user_settings.value(par).toByteArray();
         QPixmap pic;
         pic.loadFromData(arr, "PNG");
         return pic;
@@ -149,12 +166,14 @@ namespace mmd
     }
 
     map<setnum, QVariant> settings; 
-    QString friend_offline = "friend_offline";
-    QString friend_online = "friend_online";
-    QString training = "training";
-    QString historical = "history";
-    QSettings user_settings;
+    const QString friend_offline = "friend_offline";
+    const QString friend_online = "friend_online";
+    const QString training = "training";
+    const QString historical = "history";
 
+    QSettings user_settings("MMD18 soft", "MercuryChess");
+    const QString username_setting = "username";
+    const QString userpic_setting = "userpic";
 
 #ifdef MMDTEST
     scoord a1 = stringToCoord("a1");
