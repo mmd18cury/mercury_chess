@@ -304,11 +304,11 @@ namespace mmd
         QString description = "I am Max Cury (MMD18) and this is my pet project written in C++ programming language with Qt framework.<br><br>"
             "It may seem that the main feature of the program is a chess game with a beautiful style, but it is absolutely not.<br><br>The main feature is its built-in archiver "
             "with its own chess data format using a sophisticated algorithm to compress the data, so that it takes even less than 1 byte of space for every halfmove and uses its own "
-            "bitstream allowing it to operate individual bits in cout style (available on <a href = 'https://github.com/redmms/finestream.git'>github</a>).<br><br>I also invented several algorithms for describing chess board positions "
+            "bitstream allowing it to operate individual bits in std::cout style (available on <a href = 'https://github.com/redmms/finestream.git'>github</a>).<br><br>I also invented several algorithms for describing chess board positions "
             "(like FEN but with a different structure and encoded in bits) and will code them if I find some "
             "interest of programmers or chess community. "
             "<br><br>"
-            "To contact me, use this email: mmd18cury@yandex.ru";
+            "To contact me, use this email: mmd18cury@yandex.com";
         QMessageBox msg_box(this);
         msg_box.setWindowTitle(title);
         msg_box.setTextFormat(Qt::RichText);   //this is what makes the links clickable
@@ -333,14 +333,14 @@ namespace mmd
 
     void MainWindow::on_actionSend_suggestion_triggered()
     {
-        QDesktopServices::openUrl(QUrl("mailto:mmd18cury@yandex.ru?subject=MercuryChess:Suggestion&body=Please, make it impossible to lose.", QUrl::TolerantMode));
+        QDesktopServices::openUrl(QUrl("mailto:mmd18cury@yandex.com?subject=MercuryChess:Suggestion&body=Please, make it impossible to lose.", QUrl::TolerantMode));
     }
 
     void MainWindow::on_actionReport_a_bug_triggered()
     {
         LogHandler::log_ofstream.flush();
         QString app_dir = QCoreApplication::applicationDirPath();
-        QDesktopServices::openUrl(QUrl("mailto:mmd18cury@yandex.ru?subject=MercuryChess:Bug report&body=Please attach the log file. Choose to attach a file and enter next path, then choose log.txt file: " + app_dir, QUrl::TolerantMode));
+        QDesktopServices::openUrl(QUrl("mailto:mmd18cury@yandex.com?subject=MercuryChess:Bug report&body=Please attach the log file. Choose to attach a file and enter next path, then choose log.txt file: " + app_dir, QUrl::TolerantMode));
     }
 
     void MainWindow::on_actionSave_game_triggered()
@@ -350,11 +350,17 @@ namespace mmd
                 "You need to have an open game to save to use this option.");
             return;
         }
+        else if (board->History().empty()){
+            showBox("Oops",
+                "You are trying to write an empty game.");
+            return;
+        }
         QString game_regime = settings[game_regime_e].toString();
         if (game_regime == training) {
             showBox("In development", "Not available for training mode yet.");
             return;
         }
+
 
         // Create directory
         QString app_dir = QCoreApplication::applicationDirPath();
@@ -365,7 +371,7 @@ namespace mmd
                 qDebug() << "saved_games folder created";
             }
             else {
-                qDebug() << "Couldn't create saved_games folder";
+                qWarning() << "Couldn't create saved_games folder";
             }
         }
 
@@ -399,7 +405,7 @@ namespace mmd
             qDebug() << "Archive file" << archive_fullname << "successfuly created.";
         }
         else {
-            qDebug() << "Couldn't open archive file" << archive_fullname;
+            qWarning() << "Couldn't open archive file" << archive_fullname;
         }
 
         // Write game to the file
@@ -434,7 +440,7 @@ namespace mmd
             qDebug() << "Archive file" << archive_fullname << "is ready to be open.";
         }
         else {
-            qDebug() << "Couldn't open archive file" << archive_fullname;
+            qWarning() << "Couldn't open archive file" << archive_fullname;
         }
 
         // Read game from the file

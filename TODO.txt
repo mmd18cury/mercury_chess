@@ -1,0 +1,4 @@
+- Consider using patterns, for example abstract fabric for internet packages or MVC for board, tiles etc
+- Consider appropriate situations to use qFatal() instead of qWarning() and qCritical() to avoid memory leaks or something
+- Divide WebClient and MainWindow, leave an opportunity to turn off signals from server, otherwise they can interfere in games etc.
+- Test 50 rules counter better, seems like somewhere a bug in it

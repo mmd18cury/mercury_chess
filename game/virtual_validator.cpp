@@ -593,7 +593,7 @@ namespace mmd
     }
 
     unsigned VirtualValidator::countParticular(int depth, int i, scoord from)
-        // last_from == {7, 1} && last_to == {7, 2} è i == 1 (2)
+        // last_from == {7, 1} && last_to == {7, 2} && i == 1 (2)
     {
         //auto size = board->history.size();
         //scoord last_from;

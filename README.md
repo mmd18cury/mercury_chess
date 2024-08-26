@@ -25,9 +25,9 @@ It's built entirely in C++, making it super snappy. Plus, it can potentially wor
 It has a modern look and is made in harmonic colors. I tried to make it stylish. 
 As if it wasn't enough, you can play with your friends online (or enemies, if you will make them play with you), chat, set profile pictures, set and get FEN notation, etc.  
   
-But here's the real kicker: instead of the usual PGN format for saving games, MercuryChess uses its own compact format, saving you tons of space on your device. 
+But here's the real kicker: instead of the usual PGN format for saving games, MercuryChess uses its own compact data format, saving you tons of space on your device. 
 It compresses every half-move to less than 1 byte. 
-PGN half-moves take about 5 bytes; other formats may use 12-16 bits per half-move; half-moves in my format take only 5 bits on average, 
+PGN half-moves take about 5 bytes; other data formats may use 12-16 bits per half-move; half-moves in my data format take only 5 bits on average, 
 so in the end it is more than 10x more compact compared to PGN.  
   
 ![format_comparison](/decription_media/format_comparison.jpg) 

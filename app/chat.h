@@ -18,6 +18,7 @@ namespace mmd
     public:
         Chat(QWidget* parent_, QColor background_color_ = Qt::white);
 
+        void initChatArea();
         void printMessage(QString name, bool own, QString text);
         void clearMessages();
 

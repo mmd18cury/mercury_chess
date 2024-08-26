@@ -9,6 +9,7 @@
 #include <QBitmap>
 #include <QVariant>
 #include <QDateTime>
+#include <QSettings>
 #include <string>
 using namespace std;
 
@@ -88,18 +89,18 @@ namespace mmd
         msg_box.exec();
     }
 
-    void setPic(setnum par, const QPixmap& pic) 
+    void setPic(setnum par, const QPixmap& pic, QVariant& setting)
     {
         QByteArray arr;
         QBuffer buffer(&arr);
         buffer.open(QIODevice::WriteOnly);
         pic.save(&buffer, "PNG");
-        settings[par].setValue(arr);
+        setting.setValue(arr);
     }
 
-    QPixmap getPic(setnum par) 
+    QPixmap getPic(setnum par, QVariant& setting)
     {
-        QByteArray arr = settings[par].toByteArray();
+        QByteArray arr = setting.toByteArray();
         QPixmap pic;
         pic.loadFromData(arr, "PNG");
         return pic;
@@ -147,12 +148,13 @@ namespace mmd
         return qvariant_cast<QBitmap>(settings[par]);
     }
 
-    map<setnum, QVariant> settings;
- 
+    map<setnum, QVariant> settings; 
     QString friend_offline = "friend_offline";
     QString friend_online = "friend_online";
     QString training = "training";
     QString historical = "history";
+    QSettings user_settings;
+
 
 #ifdef MMDTEST
     scoord a1 = stringToCoord("a1");

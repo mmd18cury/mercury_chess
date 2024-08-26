@@ -149,7 +149,7 @@ namespace mmd
     //}
     void replaceOld(NEW young, OLD old) {
         if (!young || !old) {
-            qDebug() << "WARNING: wrong arguments of replaceOld()";
+            qWarning() << "Wrong arguments of replaceOld()";
             return;
         }
         QLayout* layout = old->parentWidget()->layout();
@@ -160,7 +160,7 @@ namespace mmd
             old = nullptr;
         }
         else {
-            qDebug() << "replaceOld() 'old' argument had no layout";
+            qWarning() << "replaceOld() 'old' argument had no layout";
             return;
         }
     }

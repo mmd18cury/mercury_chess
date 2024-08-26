@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QLabel>
 #include <QPainter>
+#include <QDebug>
 using namespace std;
 
 namespace mmd
@@ -18,9 +19,20 @@ namespace mmd
         message_metrics{ message_font },
         max_message_width{}
     {
+    }
+
+    void Chat::initChatArea()
+    {
         //chat itself
+        // Should be called only after certain size established
         max_message_width = minimumWidth() - 20;
+        if (max_message_width < 0)
+            qCritical() << "max_message_width < 0";
+        if (minimumWidth() == 0)
+            qCritical() << "minimumWidth() == 0";
         message_layout->setContentsMargins(10, 5, 10, 5);
+        if (width() < 28)
+            qCritical() << "width() < 28";
         message_box->resize(width() - 28, 0);
         message_box->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         message_box->setStyleSheet("background-color: transparent;"); //#1B1C1F

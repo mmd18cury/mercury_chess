@@ -143,7 +143,7 @@ namespace mmd
             }
             else if (valid->isValid(coord)) {
                 savingHalfMove(from_coord, coord, 'e');
-                valid->hideValid(); // order matters here, valid->valid_moves is used by saveBitmove()
+                valid->hideValid(); // order matters here, valid->valid_moves is used by saveBitmove() inside savingHalfMove()
                 from_coord = { -1, -1 };
             }
             else {
@@ -256,8 +256,10 @@ namespace mmd
         if (saved.turn == side)
             emit moveMade(from, to, saved.promo);
 
-        if (end)
+        if (end){
+            valid->hideValid();
             emit theEnd(end_type);
+        }
         else if (valid->Check())
             emit newStatus(turn == side ? check_to_user : check_to_opponent);
         else if (saved.castling)

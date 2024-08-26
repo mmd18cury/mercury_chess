@@ -33,7 +33,7 @@ namespace mmd
             if (from != scoord{ -1, -1 })
                 theTile(from)->dyeNormal();
             else
-                qDebug() << "You try to dyeNormal() from_coord that is nullptr";
+                qWarning() << "You try to dyeNormal() from_coord that is nullptr";
             for (auto move : valid_moves)
                 theTile(move)->dyeNormal();
         }

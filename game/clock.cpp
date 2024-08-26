@@ -35,7 +35,7 @@ namespace mmd
     void ChessClock::stopTimer()
     {
         if (!black_timer || !white_timer || !sec_counter)
-            qDebug() << "ERROR: tried to stop deleted timer";
+            qCritical() << "Tried to stop deleted timer";
         else {
             black_timer->stop();
             white_timer->stop();

@@ -40,7 +40,7 @@ namespace mmd
         quint8 byte;
         read_stream >> byte;
         if (byte < packnum::registration || byte > packnum::already_registered)
-            qDebug() << "Error: packnum from read_package is out of range";
+            qCritical() << "packnum from read_package is out of range";
         else
             data = packnum(byte);
     }
@@ -65,7 +65,7 @@ namespace mmd
         QByteArray arr;
         readPack(arr);
         if (!data.loadFromData(arr, "PNG"))
-            qDebug() << "Error: couldn't load QPixmap from QByteArray in read_package";
+            qCritical() << "Error: couldn't load QPixmap from QByteArray in read_package";
     }
 
     void WebClient::readPack(bool& data) {

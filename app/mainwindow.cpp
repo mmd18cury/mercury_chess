@@ -46,6 +46,7 @@ namespace mmd
         QScrollArea* old_chat = ui->chat_area;
         chat = (new Chat(this, QColor(0, 102, 51)));
         copyChatProp(chat, old_chat);
+        chat->initChatArea();
         replaceOld(chat, old_chat);
 
 
@@ -156,13 +157,13 @@ namespace mmd
     {
         if (!ui || !ui->tabWidget || !page)
         {
-            qWarning() << "ERROR: in open tab with pointers";
+            qCritical() << "Invalid pointers in openTab method";
             return;
         }
         last_tab = ui->tabWidget->currentWidget();
         if (!last_tab)
         {
-            qWarning() << "ERROR: in open tab with last_tab pointer";
+            qCritical() << "Invalid last_tab pointer in openTab method";
             return;
         }
         ui->tabWidget->setCurrentWidget(page);
@@ -259,9 +260,9 @@ namespace mmd
             connect(ui->resign_button, &QPushButton::clicked, this, &MainWindow::on_resign_button_clicked);
             connect(ui->draw_button, &QPushButton::clicked, this, &MainWindow::on_draw_button_clicked);
             if (!messages_connected) {
-                qDebug() << "Messages were not connected";
+                qWarning() << "Messages were not connected";
             }
-            qDebug() << "editReturnPressed receivers number is" << receivers(SIGNAL(editReturnPressed));
+            qDebug() << "editReturnPressed signal receivers amount is" << receivers(SIGNAL(editReturnPressed));
         }
         else if (game_regime == friend_offline || game_regime == training) {
             if (game_regime == training) {
@@ -313,7 +314,7 @@ namespace mmd
             replaceOld(board, old_board);
         }
         else {
-            qDebug() << "ERROR: in MainWindow::startGame() with board/ui->background pointer";
+            qCritical() << "Invalid board or ui->background pointer in MainWindow::startGame()";
         }
 
         connect(board, &Board::newStatus, this, &MainWindow::statusSlot);
@@ -349,7 +350,7 @@ namespace mmd
     void MainWindow::endSlot(endnum end_type)
     {
         if (!game_active) {
-            qDebug() << "Application tried to close inactive game";
+            qWarning() << "Application tried to close inactive game";
             return;
         }
 
@@ -483,7 +484,7 @@ namespace mmd
             }
         }
         else {
-            qDebug() << "WARNING: you tried to write an empty history";
+            qWarning() << "You tried to write an empty history";
         }
     }
 }  // namespace mmd

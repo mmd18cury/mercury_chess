@@ -21,9 +21,9 @@ namespace mmd
         read_stream.setVersion(QDataStream::Qt_5_15);
         send_stream.setVersion(QDataStream::Qt_5_15);
         if (read_stream.status() != QDataStream::Ok)
-            qDebug() << "read_stream error!";
+            qCritical() << "read_stream status isn't Ok!";
         if (send_stream.status() != QDataStream::Ok)
-            qDebug() << "send_stream error!";
+            qCritical() << "send_stream status isn't Ok!";
     }
 
     WebClient::~WebClient() {
@@ -43,22 +43,22 @@ namespace mmd
         qDebug() << "Socket initialized";
         connect(socket, &QTcpSocket::errorOccurred, [&](QAbstractSocket::SocketError socketError) {
             if (socket->state() == QAbstractSocket::UnconnectedState) {
-                qDebug() << "Couldn't connect to the server:";
-                qDebug() << socketError;
+                qWarning() << "Couldn't connect to the server:";
+                qWarning() << socketError;
                 showBox("No connection",
                     "You are offline.",
                     QMessageBox::Warning);
             }
             else if (socket->state() != QAbstractSocket::ConnectedState) {
-                qDebug() << "Error occured while trying to connect to server:";
-                qDebug() << socketError;
+                qWarning() << "Error occured while trying to connect to server:";
+                qWarning() << socketError;
                 showBox("No connection",
-                    "An error occured. Contact me by mmd18cury@yandex.ru.",
+                    "An error occured. Contact me by mmd18cury@yandex.com.",
                     QMessageBox::Warning);
             }
             else {
-                qDebug() << "Socket error signal received, but socket state is connected:";
-                qDebug() << socketError;
+                qWarning() << "Socket error signal received, but socket state is connected:";
+                qWarning() << socketError;
             }
             });
         connect(socket, &QTcpSocket::connected, [&]() {
@@ -70,7 +70,7 @@ namespace mmd
             }
             });
         connect(socket, &QTcpSocket::disconnected, [&]() {
-            qDebug() << "Lost connection with server";
+            qCritical() << "Lost connection with server";
             if (mainwindow->game_active)
                 mainwindow->endSlot(endnum::server_disconnected);
             showBox("Connection failed",
@@ -100,15 +100,15 @@ namespace mmd
             return false;
         }
         else if (!socket->isValid()) {
-            qDebug() << "Socket wasn't valid, connecting.";
+            qWarning() << "Socket wasn't valid, connecting.";
             return connectToServer();
         }
         else if(!socket->isOpen()){
-            qDebug() << "Socket wasn't open, connecting.";
+            qWarning() << "Socket wasn't open, connecting.";
             return connectToServer();
         }
         else if (socket->state() == QAbstractSocket::UnconnectedState) {
-            qDebug() << "Socket wasn't connected, connecting.";
+            qWarning() << "Socket wasn't connected, connecting.";
             return connectToServer();
         }
         else {
@@ -127,7 +127,7 @@ namespace mmd
             return socket->waitForConnected(3000);
         }
         else {
-            qDebug() << "Socket was uninitialized before connecting to the server";
+            qWarning() << "Socket was uninitialized before connecting to the server";
             return false;
         }
     }
@@ -149,27 +149,25 @@ namespace mmd
     {
         while (socket->bytesAvailable() < 2) {
             if (!socket->waitForReadyRead()) {
-                qDebug() << "waitForReadyRead() timed out";
+                qWarning() << "waitForReadyRead() timed out";
                 return;
             }
         }
         read_package = socket->read(2);
         quint16 pack_size;
         read_stream >> pack_size;
-        qDebug() << "Received package size supposed to be" << pack_size;
         // else can be done: (((pack_size = 0) &= buffer[0]) <<= 8) &= buffer[1]
         // but it will depend on endiannes;
 
         int need_to_add = pack_size - read_package.size();
         if (socket->bytesAvailable() >= need_to_add) {
-            qDebug() << "Full package arrived";
             read_package.append(socket->read(need_to_add));
         }
         else {
             qDebug() << "Only a part of package arrived. Waiting for other parts";
             while (socket->bytesAvailable() < need_to_add) {
                 if (!socket->waitForReadyRead()) {
-                    qDebug() << "Error waiting for more data";
+                    qCritical() << "Error waiting for more data";
                     return;
                 }
             }
@@ -178,11 +176,11 @@ namespace mmd
         }
 
         if (read_package.isEmpty()) {
-            qDebug() << "Received package was empty or most likely there was an error";
+            qCritical() << "Received package was empty or most likely there was an error";
             return;
         }
         else {
-            qDebug() << "Received package size is" << read_package.size();
+            qDebug() << "Received package size is" << read_package.size() << "out of" << pack_size;
         }
         read_stream.device()->reset();
     }
@@ -196,7 +194,7 @@ namespace mmd
             connectToServer();
         }
         if (!checkConnection(type)) {
-            qDebug() << "Couldn't send data to server. Data type is " << int(type);
+            qCritical() << "Couldn't send data to server. Data type is " << int(type);
             return;
         }
         switch (type) {
@@ -267,17 +265,17 @@ namespace mmd
         //        }
         //        auto bytes_written = socket->write(little_copy);
         //        if (!socket->waitForBytesWritten())
-        //            qDebug() << "Couldn't wait for bytes to be written";
+        //            qWarning() << "Couldn't wait for bytes to be written";
         //        little_copy.clear();
         //    }
 
         auto bytes_written = socket->write(send_package);
-        if (!socket->waitForBytesWritten(10000))
-            qDebug() << "Couldn't wait for bytes to be written";
+        if (!socket->waitForBytesWritten(3000))
+            qWarning() << "Couldn't wait for bytes to be written";
         if (bytes_written == -1)
-            qDebug() << "Couldn't write send_package to server";
+            qWarning() << "Couldn't write send_package to server";
         else if (bytes_written != send_package.size())
-            qDebug() << "Bytes writen to server are not as wanted";
+            qWarning() << "Bytes writen to server are not as wanted";
 
         send_package.clear();
         send_stream.device()->reset();
@@ -363,7 +361,7 @@ namespace mmd
             readPack(to_k);
             scoord to{ to_k % 8, to_k / 8 };
             if (!mainwindow->board) {
-                qDebug() << "ERROR: trying to write a move to nonexisting board";
+                qCritical() << "trying to write a move to nonexisting board";
                 return;
             }
             quint8 promo;
