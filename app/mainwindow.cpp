@@ -424,7 +424,12 @@ namespace mmd
         }
 
         if (game_regime == friend_online && net) {
-            net->sendToServer(packnum::end_game);
+            if (end_type == interrupt){
+                net->sendToServer(interrupt_signal);
+            }
+            else{
+                net->sendToServer(end_game);
+            }
         }
 
         showStatus(info_message);

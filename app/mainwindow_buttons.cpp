@@ -93,8 +93,7 @@ namespace mmd
     {
         QString game_regime = settings[game_regime_e].toString();
         if (game_active && game_regime == friend_online){
-            openStopGameBox();
-            return;
+            endSlot(interrupt);
         }
         openTab(ui->friend_connect_tab);
     }

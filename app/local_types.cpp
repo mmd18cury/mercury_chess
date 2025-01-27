@@ -171,7 +171,7 @@ namespace mmd
     const QString training = "training";
     const QString historical = "history";
 
-    QSettings user_settings("MMD18 soft", "MercuryChess");
+    QSettings user_settings("MMD18 soft", "MercuryChess2");
     const QString username_setting = "username";
     const QString userpic_setting = "userpic";
 
