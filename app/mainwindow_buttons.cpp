@@ -312,7 +312,7 @@ namespace mmd
             "(like FEN but with a different structure and encoded in bits) and will code them if I find some "
             "interest of programmers or chess community. "
             "<br><br>"
-            "To contact me, use this email: mmd18cury@yandex.com";
+            "To contact me, use this email: mmd18cury@gmail.com";
         QMessageBox msg_box(this);
         msg_box.setWindowTitle(title);
         msg_box.setTextFormat(Qt::RichText);   //this is what makes the links clickable
