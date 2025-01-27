@@ -53,7 +53,7 @@ namespace mmd
                 qWarning() << "Error occured while trying to connect to the server:";
                 qWarning() << socketError;
                 showBox("No connection",
-                    "An error occured. Contact me by mmd18cury@yandex.com.",
+                    "An error occured. Contact me by mmd18cury@gmail.com.",
                     QMessageBox::Warning);
             }
             else {
