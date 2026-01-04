@@ -68,8 +68,7 @@ To load a game in history mode, you need to choose a previously saved game in .m
 
 Archiver is not available for training mode yet, though I will add it soon. 
 std::map instead of QSettings is a temporary solution, so it does not save your profile picture and local nickname if you restart. 
-The server is not supposed to be used for playing more than two players at the same time, it is a pet project, don't forget it. Also the app can't be  
-opened in several windows on the same machine.
+The server is not supposed to be used for playing more than two players at the same time, it is a pet project, don't forget it. Also the app can't be opened in several windows on the same machine.
 I don't get any money for this and spend my own money on running the server. 
 If you like the project, consider buying me a coffee:  
 https://ko-fi.com/mmd18   
